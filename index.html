@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>DigitalM — Наши кейсы</title>
+        <style>
+            :root {
+                --bg: #f8fafc;
+                --accent: #4f46e5;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            html,
+            body {
+                height: 100%;
+                overflow: hidden;
+                background-color: var(--bg);
+                font-family:
+                    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                    sans-serif;
+            }
+
+            .snap-container {
+                height: 100vh;
+                overflow-y: scroll;
+                scroll-snap-type: y mandatory;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+            }
+
+            .snap-container::-webkit-scrollbar {
+                display: none;
+            }
+
+            .snap-section {
+                height: 100vh;
+                scroll-snap-align: start;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+                background-color: var(--bg);
+            }
+
+            .snap-section img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+                background-color: #ffffff;
+            }
+
+            .overlay {
+                position: absolute;
+                top: 40px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(255, 255, 255, 0.85);
+                padding: 12px 32px;
+                border-radius: 50px;
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: var(--accent);
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+                z-index: 10;
+                white-space: nowrap;
+                user-select: none;
+                pointer-events: none;
+            }
+
+            .section-number {
+                position: absolute;
+                bottom: 40px;
+                right: 40px;
+                background: rgba(79, 70, 229, 0.9);
+                color: white;
+                width: 52px;
+                height: 52px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.1rem;
+                font-weight: 700;
+                box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+                z-index: 10;
+            }
+
+            .progress {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 3px;
+                background: linear-gradient(to right, var(--accent), #6366f1);
+                z-index: 20;
+                transition: width 0.1s ease-out;
+            }
+
+            @media (max-width: 768px) {
+                .overlay {
+                    top: 20px;
+                    padding: 10px 24px;
+                    font-size: 1rem;
+                }
+
+                .section-number {
+                    bottom: 24px;
+                    right: 24px;
+                    width: 44px;
+                    height: 44px;
+                    font-size: 1rem;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="progress" id="progress"></div>
+
+        <div class="snap-container" id="snapContainer">
+            <!-- Section 1 -->
+            <section class="snap-section">
+                <div class="overlay"></div>
+                <img src="images/1.png" alt="" loading="eager" />
+                <div class="section-number">01</div>
+            </section>
+
+            <!-- Section 2 -->
+            <section class="snap-section">
+                <div class="overlay"></div>
+                <img src="images/2.png" alt="Кейс 2" loading="lazy" />
+                <div class="section-number">02</div>
+            </section>
+
+            <!-- Section 3 -->
+            <section class="snap-section">
+                <div class="overlay"></div>
+                <img src="images/3.png" alt="Кейс 3" loading="lazy" />
+                <div class="section-number">03</div>
+            </section>
+
+        <script>
+            // Progress bar
+            const progress = document.getElementById("progress");
+            const container = document.getElementById("snapContainer");
+
+            function updateProgress() {
+                const scrollTop = container.scrollTop;
+                const scrollHeight =
+                    container.scrollHeight - container.clientHeight;
+                const scrollPercentage =
+                    scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+                progress.style.width = `${scrollPercentage}%`;
+            }
+
+            container.addEventListener("scroll", updateProgress);
+
+            // Initial progress
+            window.addEventListener("load", () => {
+                updateProgress();
+
+                // Optional: pre-load all images for smoother experience
+                const images = document.querySelectorAll("img");
+                images.forEach((img) => {
+                    if (!img.complete) {
+                        img.style.opacity = "0.6";
+                        img.addEventListener("load", () => {
+                            img.style.transition = "opacity 0.4s ease";
+                            img.style.opacity = "1";
+                        });
+                    }
+                });
+            });
+
+            // Keyboard support (Arrow Up/Down)
+            document.addEventListener("keydown", (e) => {
+                if (e.key === "ArrowDown" || e.key === "ArrowRight") {
+                    e.preventDefault();
+                    const currentScroll = container.scrollTop;
+                    const sectionHeight = window.innerHeight;
+                    container.scrollTo({
+                        top: currentScroll + sectionHeight,
+                        behavior: "smooth",
+                    });
+                }
+
+                if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
+                    e.preventDefault();
+                    const currentScroll = container.scrollTop;
+                    const sectionHeight = window.innerHeight;
+                    container.scrollTo({
+                        top: currentScroll - sectionHeight,
+                        behavior: "smooth",
+                    });
+                }
+            });
+        </script>
+    </body>
+</html>
